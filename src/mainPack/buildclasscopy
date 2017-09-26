@@ -1,0 +1,129 @@
+package mainPackage;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JToolBar;
+
+public class buildClass implements ActionListener {
+	
+	public mainWindow windowimplementer;
+	public JFrame buildFrame;
+	public JToolBar buildBar;
+	public JPanel main;
+	public JPanel north;
+	public JPanel center;
+	public JPanel south;
+	public JPanel east;
+	public JPanel west;
+	public JTextArea textArea;
+	public JTextField fileName;
+	
+	public buildClass(mainWindow x){
+		windowimplementer = x;
+		
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		buildFrame = new JFrame();
+		buildFrame.setTitle("Build Class");
+		buildFrame.setVisible(true);
+		buildFrame.setSize(400, 400);
+		buildFrame.setResizable(false);
+		buildFrame.setLocationRelativeTo(null);
+		buildFrame.setLayout(new BorderLayout());
+		buildMenu();
+	
+	}
+	
+	public void buildMenu(){
+		main = new JPanel();
+		main.setLayout(new BorderLayout());
+		main.setVisible(true);
+		main.setBackground(Color.GRAY);
+		
+		north = new JPanel(new BorderLayout());
+		ImageIcon saveIcon = new ImageIcon("res/save.png");
+		JButton saveButton = new JButton(saveIcon);
+		saveButton.setBorder(null);
+		saveButton.setBorderPainted(false);
+	    saveButton.setPreferredSize(new Dimension(40,32));
+		fileName = new JTextField("Class Name Here...");
+		
+		saveButton.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent event) {
+		    	
+		    	BufferedWriter output;
+				
+				try{
+					String filename = fileName.getText();
+					File file = new File("saveClass/" +filename+ ".kavun");
+					FileWriter fw = new FileWriter(file.getAbsoluteFile());
+					output = new BufferedWriter(fw);
+					output.write(textArea.getText(), 0, textArea.getText().length());
+					output.close();
+					JOptionPane.showMessageDialog(buildFrame,
+						   "Your File : " +filename+ " was saved",
+						   "File Save Complete",
+						   JOptionPane.PLAIN_MESSAGE);
+					buildFrame.dispose();
+				}catch(IOException e){
+					e.printStackTrace();
+					buildFrame.dispose();
+				}
+		    } 
+		 });
+		
+		
+		buildBar = new JToolBar(JToolBar.HORIZONTAL);
+		buildBar.setFloatable(false);
+		buildBar.add(fileName);
+		buildBar.add(saveButton);
+		north.add(buildBar, BorderLayout.NORTH);
+		
+		south = new JPanel(new BorderLayout());
+		east = new JPanel(new BorderLayout());
+		west = new JPanel(new BorderLayout());
+		
+		center = new JPanel(new BorderLayout());
+		center.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		JScrollPane middle = new JScrollPane();
+		textArea = new JTextArea("Studnts Names Followed by [ENTER]...");
+		textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true); 
+		textArea.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+        middle.getViewport().add(textArea);
+		
+		center.add(middle);
+	
+		
+		main.add(north, BorderLayout.NORTH);
+		main.add(south, BorderLayout.SOUTH);
+		main.add(east, BorderLayout.EAST);
+		main.add(west, BorderLayout.WEST);
+		main.add(center, BorderLayout.CENTER);
+		
+		buildFrame.add(main);
+		
+	}
+	
+
+}

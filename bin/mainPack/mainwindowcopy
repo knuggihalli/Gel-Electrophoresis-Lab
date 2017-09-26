@@ -1,0 +1,222 @@
+package mainPackage;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
+
+//Public class mainWindow is the only 
+//Class found in this application 
+//All source code is located here.
+public class mainWindow extends JFrame {
+	/**
+	 * Tucker Turn is a program created by Kavun Nuggihalli
+	 * This application is being used by teachers at the 
+	 * Stem Academy. All source code belongs to Kavun Nuggihalli
+	 * This application is freeware and may be used by anyone
+	 * Twizlet.com and Kavun Nuggihalli do not take any 
+	 * responsibility for any misuse of the program.
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	//--------Public and Static Variables --------
+	public JMenuBar menuBar;
+	public JMenu fileMenu;
+	public JMenu newFile;
+	public JMenuItem openFile;
+	public JMenuItem newClass;
+	public JMenuItem newNote;
+	public JMenuItem newAccount;
+	public static JMenuItem newTurn;
+	public JMenuItem closeFile;
+	public JMenuItem closeAll;
+	public JMenuItem saveFile;
+	public JMenuItem saveAsFile;
+	public JTextArea textArea;
+	
+	//--------Constructor of main Class --------
+	public mainWindow(){
+	super("Tucker Turn Application");
+	setSize(700, 600);
+    setLocationRelativeTo(null);
+    setResizable(false);
+    setDefaultCloseOperation(EXIT_ON_CLOSE);
+    menu();
+    document();
+	}
+	
+	
+	
+	public void menu(){
+	menuBar = new JMenuBar();
+	menuBar.setBackground(Color.LIGHT_GRAY);
+	
+	//---All JMenu's---
+	fileMenu = new JMenu("File");
+	fileMenu.setBackground(Color.LIGHT_GRAY);
+	newFile = new JMenu("New File");
+	
+	//---All JMenuItems---
+	newClass = new JMenuItem("New Class...");
+	newNote = new JMenuItem("New Note...");
+	newAccount = new JMenuItem("New Account...");
+	newTurn = new JMenuItem("New Turn...");
+	
+	openFile = new JMenuItem("Open File");
+	closeFile = new JMenuItem("Close File");
+	closeAll = new JMenuItem("Close All");
+		closeAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W,
+	            ActionEvent.SHIFT_MASK));
+		closeAll.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                System.exit(0);
+            }
+            
+		});
+	saveFile = new JMenuItem("Save File");
+	saveAsFile = new JMenuItem("Save File As");
+	
+	//---All AddOn's To Menu's---
+	menuBar.add(fileMenu);
+	fileMenu.add(newFile);
+		newFile.add(newNote);
+		newFile.addSeparator();
+		newFile.add(newClass);
+		newFile.add(newAccount);
+		newFile.add(newTurn);
+	fileMenu.addSeparator();
+	fileMenu.add(openFile);
+	fileMenu.add(closeFile);
+	fileMenu.add(closeAll);
+	fileMenu.add(saveFile);
+	fileMenu.add(saveAsFile);
+	
+	this.setJMenuBar(menuBar);
+	}
+	
+	public void document(){
+		JPanel mainPanel = new JPanel();
+		mainPanel.setLayout(new BorderLayout());
+		mainPanel.setVisible(true);
+		mainPanel.setBackground(Color.GRAY);
+		mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+		
+		/** Image ICONS */
+		ImageIcon buildIcon = new ImageIcon("res/build.png");
+		ImageIcon openIcon = new ImageIcon("res/open.png");
+		
+		/** ToolBar Buttons */
+		JButton buildButton = new JButton(buildIcon);
+		buildButton.setBorder(null);
+		buildButton.setBorderPainted(false);
+	    buildButton.setPreferredSize(new Dimension(32,32));
+		JButton openButton = new JButton(openIcon);
+		openButton.setBorder(null);
+		openButton.setBorderPainted(false);
+	    openButton.setPreferredSize(new Dimension(32,32));
+	    
+	    openButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+            	JFileChooser fileChooser = new JFileChooser();
+            	fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            	@SuppressWarnings("unused")
+				int results = fileChooser.showOpenDialog(fileChooser);
+            	File filename = fileChooser.getSelectedFile();
+            	try{
+        			@SuppressWarnings("resource")
+					BufferedReader opener = new BufferedReader(new FileReader(filename));
+        			String text;
+    					while((text = (opener.readLine())) != null){
+    						textArea.append(text + "\n");
+    					
+    				}
+    			} catch(Exception e){
+        			
+        		} 
+            }
+		});
+	    
+			//ACTION LISTNER
+			buildClass buildOption = new buildClass(this);
+			buildButton.addActionListener(buildOption);
+		/** Panels Here */
+		JPanel northPanel = new JPanel();
+		northPanel.setLayout(new BorderLayout());
+		
+		JPanel southPanel = new JPanel();
+		southPanel.setLayout(new BorderLayout());
+
+		
+		JPanel eastPanel = new JPanel();
+		eastPanel.setLayout(new BorderLayout());
+
+		//WEST PANEL
+		JPanel westPanel = new JPanel();
+		westPanel.setLayout(new BorderLayout());
+		JToolBar westToolbar = new JToolBar(JToolBar.VERTICAL);
+		westToolbar.setFloatable(false);
+		westToolbar.addSeparator();
+			westToolbar.add(buildButton);
+			westToolbar.add(openButton);
+			westToolbar.addSeparator();
+		westPanel.add(westToolbar, BorderLayout.NORTH);
+		
+		JPanel centerPanel = new JPanel();
+		centerPanel.setLayout(new BorderLayout());
+		centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		JScrollPane middle = new JScrollPane();
+		textArea = new JTextArea();
+		textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true); 
+		textArea.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
+        middle.getViewport().add(textArea);
+		
+		centerPanel.add(middle);
+		
+		//MAIN PANEL ADD FILES
+		this.add(mainPanel);
+		 
+		mainPanel.add(northPanel, BorderLayout.NORTH);
+		mainPanel.add(southPanel, BorderLayout.SOUTH);
+		mainPanel.add(eastPanel, BorderLayout.EAST);
+		mainPanel.add(westPanel, BorderLayout.WEST);
+		mainPanel.add(centerPanel, BorderLayout.CENTER);
+        
+        //x down y across
+        //top left
+        
+	}
+	
+	public static void main(String args[]){
+		mainWindow window = new mainWindow();
+		window.setVisible(true);
+		
+		newTurn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+        		mainWindow window = new mainWindow();
+        		window.setVisible(true);
+            }
+            
+		});
+	}
+
+}
